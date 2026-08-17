@@ -13,17 +13,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
- * @author alvaro
+ * @author gabriel
  */
 
 public class ServidorSalas {
-    private static final int PUERTO_DEFAULT = 5001;
+    private static final int PUERTO_DEFAULT = 5002;
     private static final int HILOS_DEFAULT = 4;
 
-   
+    // Contador atómico para el total histórico (Thread-Safe)
     private static final AtomicInteger contadorHistorico = new AtomicInteger(0);
 
-    
+    // Mapas concurrentes globales
     private static final Map<String, Sala> salas = new ConcurrentHashMap<>();
     private static final Map<String, Usuario> usuariosPorNick = new ConcurrentHashMap<>();
 
@@ -31,7 +31,7 @@ public class ServidorSalas {
         int puerto = args.length > 0 ? Integer.parseInt(args[0]) : PUERTO_DEFAULT;
         int maxHilos = args.length > 1 ? Integer.parseInt(args[1]) : HILOS_DEFAULT;
 
-    
+        // Crear sala por defecto
         salas.put("general", new Sala("general"));
 
         ExecutorService pool = Executors.newFixedThreadPool(maxHilos);
@@ -43,11 +43,11 @@ public class ServidorSalas {
         System.out.println("==================================================");
 
         while (true) {
-            Socket socketCliente = servidor.accept(); 
-            int id = contadorHistorico.incrementAndGet();
+            Socket socketCliente = servidor.accept(); // SOLO ACEPTA
+            int id = contadorHistorico.incrementAndGet(); // Incremento atómico seguro entre hilos
             System.out.println("-> Conexión entrante #" + id + " desde " + socketCliente.getInetAddress().getHostAddress());
             
-            pool.execute(new ManejadorChat(socketCliente, id)); 
+            pool.execute(new ManejadorChat(socketCliente, id)); // Y DELEGA
         }
     }
 

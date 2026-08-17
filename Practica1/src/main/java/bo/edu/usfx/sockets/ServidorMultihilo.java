@@ -12,7 +12,7 @@ import java.util.concurrent.*;
 public class ServidorMultihilo { 
   
     public static void main(String[] args) throws IOException { 
-        int puerto = args.length > 0 ? Integer.parseInt(args[0]) : 5000; 
+        int puerto = args.length > 0 ? Integer.parseInt(args[0]) : 5003; 
         int hilos  = args.length > 1 ? Integer.parseInt(args[1]) : 4; 
   
         ServerSocket servidor = new ServerSocket(puerto); 
